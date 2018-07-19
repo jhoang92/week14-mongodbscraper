@@ -26,7 +26,7 @@ app.set('view engine', 'handlebars');
 
 // Database Configuration with Mongoose
 // Connect to localhost or production environment
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/jobScraper";
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/newsScraper";
 
 mongoose.Promise = Promise;
 mongoose.connect(MONGODB_URI);
@@ -36,14 +36,13 @@ db.on('error', function(err) {
   console.log('Mongoose Error: ', err);
 });
 
-// Once logged in to the db through mongoose, log a success message
 db.once('open', function() {
   console.log('Mongoose connection successful.');
 });
 
 // Import the Comment and Article models
-var Comment = require('./models/Comment.js');
-var Article = require('./models/Article.js');
+var Comment = require('./models/Comment');
+var Article = require('./models/Article');
 
 // Import Routes/Controller
 var router = require('./controllers/controller.js');
