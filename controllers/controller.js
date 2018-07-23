@@ -63,10 +63,10 @@ router.get('/scrape', function(req, res) {
         var result = {};
 
         // Collect the Article Title (contained in the "h2" of the "header" of "this")
-        result.title = $(this).children('header').children('h2').text().trim() + ""; //convert to string for error handling later
+        result.title = $(this).children('div').children('h4').text().trim() + ""; //convert to string for error handling later
 
         // Collect the Article Link (contained within the "a" tag of the "h2" in the "header" of "this")
-        result.link = 'https://www.xda-developers.com/' + $(this).children('header').children('h2').children('a').attr('href').trim();
+        result.link = 'https://www.xda-developers.com/' + $(this).children('header').children('div').children('a').attr('href').trim();
 
         // Collect the Article Summary (contained in the next "div" inside of "this")
         result.summary = $(this).children('div').text().trim() + ""; //convert to string for error handling later
