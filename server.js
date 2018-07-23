@@ -31,15 +31,6 @@ const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/newsScraper"
 mongoose.Promise = Promise;
 mongoose.connect(MONGODB_URI);
 
-// Show any Mongoose errors
-db.on('error', function(err) {
-  console.log('Mongoose Error: ', err);
-});
-
-db.once('open', function() {
-  console.log('Mongoose connection successful.');
-});
-
 // Import the Comment and Article models
 var Comment = require('./models/Comment');
 var Article = require('./models/Article');
