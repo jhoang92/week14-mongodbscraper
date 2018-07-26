@@ -2,8 +2,10 @@
 var express = require('express');
 var router = express.Router();
 var path = require('path');
-var request = require('request'); // for web-scraping
-var cheerio = require('cheerio'); // for web-scraping
+
+// for web-scraping
+var request = require('request'); 
+var cheerio = require('cheerio');
 
 // Import the Comment and Article models
 var Comment = require('../models/Comment');
@@ -14,18 +16,13 @@ router.get('/', function (req, res){
 
   // Scrape data
   res.redirect('/scrape');
-
 });
 
 
 // Articles Page Render
 router.get('/articles', function (req, res){
-
-  // Query MongoDB for all article entries (sort newest to top, assuming Ids increment)
+  
   Article.find().sort({_id: -1})
-
-    // But also populate all of the comments associated with the articles.
-    .populate('comments')
 
     // Then, send them to the handlebars template to be rendered
     .exec(function(err, doc){
@@ -37,7 +34,6 @@ router.get('/articles', function (req, res){
       else {
         var hbsObject = {articles: doc}
         res.render('index', hbsObject);
-        // res.json(hbsObject)
       }
     });
 
@@ -46,34 +42,22 @@ router.get('/articles', function (req, res){
 
 // Web Scrape Route
 router.get('/scrape', function(req, res) {
-
-  // First, grab the body of the html with request
   request('https://www.xda-developers.com/', function(error, response, html) {
-
-    // Then, load html into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(html);
 
-    // This is an error handler for the Onion website only, they have duplicate articles for some reason...
-    var titlesArray = [];
-
     // Now, grab every everything with a class of "inner" with each "article" tag
-    $('article .inner').each(function(i, element) {
+    $('div.item_content').each(function(i, element) {
 
         // Create an empty result object
         var result = {};
 
-        // Collect the Article Title (contained in the "h2" of the "header" of "this")
-        result.title = $(this).children('div').children('h4').text().trim() + ""; //convert to string for error handling later
-
-        // Collect the Article Link (contained within the "a" tag of the "h2" in the "header" of "this")
-        result.link = 'https://www.xda-developers.com/' + $(this).children('header').children('div').children('a').attr('href').trim();
-
-        // Collect the Article Summary (contained in the next "div" inside of "this")
-        result.summary = $(this).children('div').text().trim() + ""; //convert to string for error handling later
-      
+        // Collect the Article Title
+        result.title = $(this).find("a").text().trim() + ""; 
+        // Collect the Article Link
+        result.link = $(this).children("h4").find("a").attr("href");
 
         // Error handling to ensure there are no empty scrapes
-        if(result.title !== "" &&  result.summary !== ""){
+        if(result.title !== ""){
 
           // BUT we must also check within each scrape since the Onion has duplicate articles...
           // Due to async, moongoose will not save the articles fast enough for the duplicates within a scrape to be caught
@@ -104,18 +88,10 @@ router.get('/scrape', function(req, res) {
                 });
 
               }
-              // Log that scrape is working, just the content was already in the Database
-              else{
-                console.log('Redundant Database Content. Not saved to DB.')
-              }
 
             });
         }
-        // Log that scrape is working, just the content was missing parts
-        else{
-          console.log('Redundant Onion Content. Not Saved to DB.')
-        }
-
+        
       }
       // Log that scrape is working, just the content was missing parts
       else{
