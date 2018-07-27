@@ -1,6 +1,5 @@
-{{!-- Templating for all Articles  --}}
+{{!-- Article templates--}}
 
-{{!-- Iterate Over all the articles --}}
 {{#each articles}}
   <ul class="collapsible" data-collapsible="accordion">
 
@@ -21,7 +20,6 @@
           
       </div>
     </li>
-
 
     <!-- Add Comments Drop Down -->
     <li>
@@ -95,9 +93,8 @@
             {{/each}}
           </ul>
         
-        {{!-- No comments, so display message --}}
         {{else}}
-          <p>No Comments Yet :( </p>
+          <p>No Comments</p>
         {{/if}}
             
         
